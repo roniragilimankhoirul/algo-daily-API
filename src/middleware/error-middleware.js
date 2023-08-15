@@ -1,4 +1,4 @@
-import { ResponseError } from "../error/response-error";
+import { ResponseError } from "../error/response-error.js";
 
 const errorMiddleware = async (err, req, res, next) => {
   if (!err) {
@@ -22,4 +22,5 @@ const errorMiddleware = async (err, req, res, next) => {
       .end();
   }
 };
-module.exports = { errorMiddleware };
+
+export { errorMiddleware };

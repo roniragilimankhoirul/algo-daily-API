@@ -1,11 +1,11 @@
-import { validate } from "../validation/validation";
-import { registerUserValidation } from "../validation/user-validation";
-import { PrismaClient } from "../application/database";
-import { ResponseError } from "../error/response-error";
+import { validate } from "../validation/validation.js";
+import { registerUserValidation } from "../validation/user-validation.js";
+import { prismaClient } from "../application/database.js";
+import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
-  const userCount = await PrismaClient.user.count({
+  const userCount = await prismaClient.user.count({
     where: {
       email: user.email,
     },
@@ -15,7 +15,7 @@ const register = async (request) => {
     throw new ResponseError(400, "Email already been used");
   }
   user.password = await bcrypt.hash(user.password, 10);
-  return PrismaClient.user.create({
+  return prismaClient.user.create({
     data: user,
     select: {
       name: true,
@@ -24,4 +24,4 @@ const register = async (request) => {
   });
 };
 
-module.exports = { register };
+export { register };

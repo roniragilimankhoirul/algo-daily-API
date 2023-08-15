@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { userRegister } from "../controller/user-controller";
+import { userRegister } from "../controller/user-controller.js";
 
-const publicRouter = Router.express();
+const publicRouter = new express.Router();
 publicRouter.post("/api/user", userRegister);
 
-module.exports = { publicRouter };
+export { publicRouter };
