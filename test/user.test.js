@@ -21,4 +21,13 @@ describe("POST /api/users", () => {
     expect(result.body.data.email).toBe("example@gmail.com");
     expect(result.body.data.password).toBeUndefined;
   });
+  it("should can reject invalid register", async () => {
+    const result = await supertest(app).post("/api/users").send({
+      name: "",
+      email: "",
+      password: "",
+    });
+    expect(result.status).toBe(400);
+    expect(result.body.errors).toBeDefined;
+  });
 });
