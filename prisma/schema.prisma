@@ -20,15 +20,15 @@ model User{
 
 }
 
-model Attendance{
-  id String @id @db.VarChar(100) @default(uuid())
-  attended Boolean @db.TinyInt
-  timestamp DateTime @db.Timestamp()
-  location String @db.VarChar(100)
-  reason String @db.Text
+// model Attendance{
+//   id String @id @db.VarChar(100) @default(uuid())
+//   attended Boolean @db.TinyInt
+//   timestamp DateTime @db.Timestamp()
+//   location String @db.VarChar(100)
+//   reason String @db.Text
 
-  @@map("attendances")
-}
+//   @@map("attendances")
+// }
 
 // model UserAttendance{
 //   user_id String @db.VarChar(100)
