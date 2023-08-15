@@ -24,4 +24,4 @@ const register = async (request) => {
   });
 };
 
-export { register };
+export default { register };

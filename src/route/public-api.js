@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { userRegister } from "../controller/user-controller.js";
+import userController from "../controller/user-controller.js";
 
 const publicRouter = new express.Router();
-publicRouter.post("/api/user", userRegister);
+publicRouter.post("/api/users", userController.register);
 
 export { publicRouter };
