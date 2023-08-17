@@ -4,7 +4,8 @@
   "description": "API untuk aplikasi AlgoTrack",
   "main": "src/main.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node src/main.js"
   },
   "jest": {
     "transform": {
