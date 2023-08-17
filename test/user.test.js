@@ -2,6 +2,7 @@ import supertest from "supertest";
 import { app } from "../src/application/app.js";
 import { prismaClient } from "../src/application/database.js";
 import { logger } from "../src/application/logging.js";
+import bcrypt from "bcrypt";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
@@ -53,5 +54,50 @@ describe("POST /api/users", () => {
     logger.info(result.body);
     expect(result.status).toBe(400);
     expect(result.body.errors).toBeDefined;
+  });
+});
+
+describe("POST /api/users/login", () => {
+  beforeEach(async () => {
+    await prismaClient.user.create({
+      data: {
+        name: "test",
+        email: "test@gmail.com",
+        password: await bcrypt.hash("test", 10),
+      },
+    });
+  });
+
+  afterEach(async () => {
+    await prismaClient.user.deleteMany({
+      where: {
+        email: "test@gmail.com",
+      },
+    });
+  });
+  test("should can login user", async () => {
+    const result = await supertest(app).post("/api/users/login").send({
+      email: "test@gmail.com",
+      password: "test",
+    });
+    logger.info(result.body);
+    expect(result.status).toBe(200);
+  });
+
+  test("should reject login user", async () => {
+    const result = await supertest(app).post("/api/users/login").send({
+      email: "",
+      password: "",
+    });
+    logger.info(result.body);
+    expect(result.status).toBe(400);
+  });
+  test("should reject login user", async () => {
+    const result = await supertest(app).post("/api/users/login").send({
+      email: "test@gmail.com",
+      password: "sd",
+    });
+    logger.info(result.body);
+    expect(result.status).toBe(401);
   });
 });
