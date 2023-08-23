@@ -2,6 +2,7 @@ import express from "express";
 import userController from "../controller/user-controller.js";
 import { requireAuth } from "../middleware/auth-middleware.js";
 import multer from "multer";
+import attendaceController from "../controller/attendace-controller.js";
 
 const userRouter = new express.Router();
 
@@ -19,5 +20,7 @@ userRouter.put(
   upload.single("photo"),
   userController.updateUserPhoto
 );
+
+userRouter.post("/api/users/attendance", attendaceController.createAttendance);
 
 export { userRouter };

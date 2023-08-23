@@ -41,6 +41,7 @@ const login = async (request) => {
       email: loginRequest.email,
     },
     select: {
+      id: true,
       name: true,
       email: true,
       password: true,
