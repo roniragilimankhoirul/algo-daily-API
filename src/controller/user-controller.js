@@ -23,4 +23,19 @@ const login = async (req, res, next) => {
   }
 };
 
-export default { register, login };
+const updateUserPhoto = async (req, res, next) => {
+  try {
+    const userEmail = req.decodedToken.user.email;
+    const uploadedFile = req.file;
+    console.log(req);
+
+    const result = await userService.updateUserPhoto(userEmail, uploadedFile);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { register, login, updateUserPhoto };

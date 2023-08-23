@@ -2,13 +2,16 @@ import { validate } from "../validation/validation.js";
 import {
   loginUserValidation,
   registerUserValidation,
+  updateUserPhotoValidation,
 } from "../validation/user-validation.js";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { logger } from "../application/logging.js";
+import ImageKit from "imagekit";
 import CryptoJS from "crypto-js";
+import { request } from "express";
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
@@ -74,4 +77,38 @@ const login = async (request) => {
   return { token, userFullData };
 };
 
-export default { register, login };
+const updateUserPhoto = async (userEmail, uploadedFile) => {
+  const imagekit = new ImageKit({
+    publicKey: "public_9rmFWwNzjI9XVB2JdzaIyI10C+I=",
+    privateKey: "private_jm1crOoYsIfCIiyEno50eAz7dXM=",
+    urlEndpoint: "https://ik.imagekit.io/abazure/",
+  });
+
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  // Upload photo to ImageKit.io
+  const uploadResponse = await imagekit.upload({
+    file: uploadedFile.buffer.toString("base64"), // Convert buffer to base64 string
+    fileName: `${userInDatabase.id}_profile_photo.jpg`,
+  });
+
+  // Update user's photo_url in the database
+  return prismaClient.user.update({
+    where: { id: userInDatabase.id },
+    data: { photo_url: uploadResponse.url },
+    select: {
+      name: true,
+      email: true,
+      photo_url: true,
+    },
+  });
+};
+
+export default { register, login, updateUserPhoto };

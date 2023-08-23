@@ -9,7 +9,8 @@ const requireAuth = (req, res, next) => {
 
   jwt.verify(token, secret, (err, decodeToken) => {
     if (err) return res.status(498).json({ message: invalidMsg });
-    return next();
+    req.decodedToken = decodeToken;
+    next();
   });
 };
 
