@@ -16,10 +16,35 @@ model User{
   email String @unique @db.VarChar(100)
   password String @db.VarChar(100)
   photo_url String? @db.Text
+  attendances UserAttendance[]
 
   @@map("users")
 
 }
+
+model Attendance {
+  id        String        @id @db.VarChar(100) @default(uuid())
+  attended  Boolean       @db.TinyInt
+  timestamp DateTime      @db.Timestamp() @default(now())
+  latitude  Float         @db.Double      
+  longitude Float         @db.Double
+  reason    String        @db.Text
+  users     UserAttendance[]
+
+  @@map("attendances")
+}
+
+model UserAttendance {
+  user_id       String    @db.VarChar(100)
+  attendance_id String    @db.VarChar(100)
+  user          User      @relation(fields: [user_id], references: [id])
+  attendance    Attendance @relation(fields: [attendance_id], references: [id])
+
+  @@id([user_id, attendance_id])
+  @@map("user_attendances")
+}
+
+
 
 // model Attendance{
 //   id String @id @db.VarChar(100) @default(uuid())
