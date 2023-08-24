@@ -15,6 +15,8 @@ const upload = multer({
 
 userRouter.use(requireAuth);
 
+userRouter.get("/api/users/profile", userController.get);
+
 userRouter.put(
   "/api/users/photo",
   upload.single("photo"),

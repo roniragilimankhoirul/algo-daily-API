@@ -23,6 +23,19 @@ const login = async (req, res, next) => {
   }
 };
 
+const get = async (req, res, next) => {
+  try {
+    const user = req.decodedToken.user.email;
+    console.log(user);
+    const result = await userService.get(user);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const updateUserPhoto = async (req, res, next) => {
   try {
     const userEmail = req.decodedToken.user.email;
@@ -38,4 +51,4 @@ const updateUserPhoto = async (req, res, next) => {
   }
 };
 
-export default { register, login, updateUserPhoto };
+export default { register, login, get, updateUserPhoto };

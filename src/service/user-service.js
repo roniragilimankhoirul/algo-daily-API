@@ -1,5 +1,6 @@
 import { validate } from "../validation/validation.js";
 import {
+  getUserValidation,
   loginUserValidation,
   registerUserValidation,
   updateUserPhotoValidation,
@@ -78,6 +79,26 @@ const login = async (request) => {
   return { token, userFullData };
 };
 
+const get = async (user) => {
+  user = validate(getUserValidation, user);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user,
+    },
+    select: {
+      name: true,
+      email: true,
+      password: true,
+      photo_url: true,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError("User not Found");
+  }
+  console.log(userInDatabase);
+  return userInDatabase;
+};
+
 const updateUserPhoto = async (userEmail, uploadedFile) => {
   const imagekit = new ImageKit({
     publicKey: "public_9rmFWwNzjI9XVB2JdzaIyI10C+I=",
@@ -112,4 +133,4 @@ const updateUserPhoto = async (userEmail, uploadedFile) => {
   });
 };
 
-export default { register, login, updateUserPhoto };
+export default { register, login, get, updateUserPhoto };
