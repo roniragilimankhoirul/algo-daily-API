@@ -40,7 +40,7 @@ const updateUserPhoto = async (req, res, next) => {
   try {
     const userEmail = req.decodedToken.user.email;
     const uploadedFile = req.file;
-    console.log(req);
+    console.log(req.file);
 
     const result = await userService.updateUserPhoto(userEmail, uploadedFile);
     res.status(200).json({
