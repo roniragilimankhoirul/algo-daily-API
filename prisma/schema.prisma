@@ -1,37 +1,33 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id String @id @db.VarChar(100) @default(uuid())
-  name String @db.VarChar(100)
-  email String @unique @db.VarChar(100)
-  password String @db.VarChar(100)
-  photo_url String? @db.Text
+model User {
+  id        String        @id @db.VarChar(100) @default(uuid())
+  name      String        @db.VarChar(100)
+  email     String        @unique @db.VarChar(100)
+  password  String        @db.VarChar(100)
+  photo_url String?       @db.Text
   attendances UserAttendance[]
 
-  @@map("users")
-
+  @@map(name: "users")
 }
 
 model Attendance {
   id        String        @id @db.VarChar(100) @default(uuid())
-  attended  Boolean       @db.TinyInt
-  timestamp DateTime      @db.Timestamp() @default(now())
-  latitude  Float         @db.Double      
-  longitude Float         @db.Double
+  attended  Boolean       @db.Boolean
+  timestamp DateTime      @db.Timestamp @default(now())
+  latitude  Float         @db.Real
+  longitude Float         @db.Real
   reason    String        @db.Text
   users     UserAttendance[]
 
-  @@map("attendances")
+  @@map(name: "attendances")
 }
 
 model UserAttendance {
@@ -41,25 +37,5 @@ model UserAttendance {
   attendance    Attendance @relation(fields: [attendance_id], references: [id])
 
   @@id([user_id, attendance_id])
-  @@map("user_attendances")
+  @@map(name: "user_attendances")
 }
-
-
-
-// model Attendance{
-//   id String @id @db.VarChar(100) @default(uuid())
-//   attended Boolean @db.TinyInt
-//   timestamp DateTime @db.Timestamp()
-//   location String @db.VarChar(100)
-//   reason String @db.Text
-
-//   @@map("attendances")
-// }
-
-// model UserAttendance{
-//   user_id String @db.VarChar(100)
-//   attendance_id String @db.VarChar(100)
-
-//   @@id([user_id,attendance_id])
-//   @@map("user_attendances")
-// }
