@@ -1,0 +1,15 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: algo-track-API
+    src: ./
+    engine: nodejs16
+    primary: true
+    public_routes:
+      - "/*"
+    presets:
+      env:
+        - name: DATABASE_URL
+          description: Secret message only available to this Micro
+          default: "postgres://default:mx1QTR2HYMvK@ep-tight-union-83852881.ap-southeast-1.postgres.vercel-storage.com:5432/verceldb"
+    run: node index.js
