@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Status" AS ENUM ('ON_DUTY', 'PERMIT', 'OFF_DUTY', 'NOT_FILLED');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" VARCHAR(100) NOT NULL,
@@ -12,11 +15,12 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "attendances" (
     "id" VARCHAR(100) NOT NULL,
-    "attended" BOOLEAN NOT NULL,
+    "status" "Status" NOT NULL,
     "timestamp" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "latitude" REAL NOT NULL,
-    "longitude" REAL NOT NULL,
-    "reason" TEXT NOT NULL,
+    "latitude" REAL,
+    "longitude" REAL,
+    "reason" TEXT,
+    "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "attendances_pkey" PRIMARY KEY ("id")
 );

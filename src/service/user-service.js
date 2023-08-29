@@ -3,6 +3,7 @@ import {
   getUserValidation,
   loginUserValidation,
   registerUserValidation,
+  updateUserPasswordValidation,
   updateUserPhotoValidation,
 } from "../validation/user-validation.js";
 import { prismaClient } from "../application/database.js";
@@ -133,4 +134,29 @@ const updateUserPhoto = async (userEmail, uploadedFile) => {
   });
 };
 
-export default { register, login, get, updateUserPhoto };
+const updateUserPassword = async (user, newPassword) => {
+  // Validate the newPasswordData
+  const validatedData = validate(updateUserPasswordValidation, newPassword);
+
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user,
+    },
+  });
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  const newPasswordHash = await bcrypt.hash(validatedData.newPassword, 10);
+
+  return prismaClient.user.update({
+    where: { id: userInDatabase.id },
+    data: { password: newPasswordHash },
+    select: {
+      name: true,
+      email: true,
+    },
+  });
+};
+
+export default { register, login, get, updateUserPhoto, updateUserPassword };

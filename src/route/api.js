@@ -16,6 +16,7 @@ const upload = multer({
 userRouter.use(requireAuth);
 
 userRouter.get("/api/users/profile", userController.get);
+userRouter.put("/api/users/password", userController.updateUserPassword);
 
 userRouter.put(
   "/api/users/photo",
@@ -24,5 +25,6 @@ userRouter.put(
 );
 
 userRouter.post("/api/users/attendance", attendaceController.createAttendance);
+userRouter.get("/api/users/attendance/history", attendaceController.get);
 
 export { userRouter };

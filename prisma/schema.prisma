@@ -19,13 +19,21 @@ model User {
   @@map(name: "users")
 }
 
+enum Status {
+    ON_DUTY
+    PERMIT
+    OFF_DUTY
+    NOT_FILLED
+}
+
 model Attendance {
   id        String        @id @db.VarChar(100) @default(uuid())
-  attended  Boolean       @db.Boolean
+  status    Status
   timestamp DateTime      @db.Timestamp @default(now())
-  latitude  Float         @db.Real
-  longitude Float         @db.Real
-  reason    String        @db.Text
+  latitude  Float?         @db.Real
+  longitude Float?         @db.Real
+  reason    String?        @db.Text
+  created_at DateTime     @db.Timestamp @default(now())
   users     UserAttendance[]
 
   @@map(name: "attendances")

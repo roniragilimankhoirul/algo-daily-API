@@ -14,4 +14,16 @@ const createAttendance = async (req, res, next) => {
   }
 };
 
-export default { createAttendance };
+const get = async (req, res, next) => {
+  try {
+    const user = req.decodedToken.user.email;
+    const result = await attendaceService.get(user);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { createAttendance, get };

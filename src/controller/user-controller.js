@@ -51,4 +51,17 @@ const updateUserPhoto = async (req, res, next) => {
   }
 };
 
-export default { register, login, get, updateUserPhoto };
+const updateUserPassword = async (req, res, next) => {
+  try {
+    const user = req.decodedToken.user.email;
+    const newPassword = req.body;
+    const result = await userService.updateUserPassword(user, newPassword);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { register, login, get, updateUserPhoto, updateUserPassword };
