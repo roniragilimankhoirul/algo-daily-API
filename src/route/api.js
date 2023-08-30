@@ -26,5 +26,9 @@ userRouter.put(
 
 userRouter.post("/api/users/attendance", attendaceController.createAttendance);
 userRouter.get("/api/users/attendance/history", attendaceController.get);
+userRouter.get(
+  "/api/users/attendance/history/:id",
+  attendaceController.getById
+);
 
 export { userRouter };

@@ -70,13 +70,11 @@ const login = async (request) => {
     "CoAmswhTKX+W4/I2einL3kIrTQ8nAHny902dTJO1n3JJ2EmQci2Cs5QedkHwEsgW+SSEYBmCN4YZbh9e0KfZ3Q==";
   // const encryptJwtKey =
   const token = jwt.sign({ user }, jwtSecretKey, { expiresIn: "1d" });
-  logger.info(token);
   const userFullData = await prismaClient.user.findUnique({
     where: {
       email: user.email,
     },
   });
-  logger.info(token);
   return { token, userFullData };
 };
 

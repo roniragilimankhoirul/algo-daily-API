@@ -1,9 +1,12 @@
+import { request } from "express";
 import { prismaClient } from "../application/database.js";
 import {
   createAttendanceValidation,
+  getAttendanceByIdValidation,
   getAttendanceValidation,
 } from "../validation/attendance-validation.js";
 import { validate } from "../validation/validation.js";
+import { ResponseError } from "../error/response-error.js";
 
 const createAttendance = async (user, request) => {
   const attendanceData = validate(createAttendanceValidation, request);
@@ -19,7 +22,6 @@ const createAttendance = async (user, request) => {
     throw new ResponseError(404, "User Not Found");
   }
 
-  // Create the attendance record
   const createdAttendance = await prismaClient.attendance.create({
     data: {
       ...attendanceData,
@@ -64,4 +66,35 @@ const get = async (user) => {
   return userAttendances.map(({ attendance }) => attendance);
 };
 
-export default { createAttendance, get };
+const getById = async (request) => {
+  const validatedRequest = validate(getAttendanceByIdValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: validatedRequest.email,
+    },
+  });
+
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  const userAttendance = await prismaClient.userAttendance.findUnique({
+    where: {
+      user_id_attendance_id: {
+        user_id: userInDatabase.id,
+        attendance_id: validatedRequest.id,
+      },
+    },
+    include: {
+      attendance: true,
+    },
+  });
+
+  if (!userAttendance) {
+    throw new ResponseError(404, "Attendance Not Found");
+  }
+
+  return userAttendance.attendance;
+};
+
+export default { createAttendance, get, getById };

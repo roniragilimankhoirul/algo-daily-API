@@ -19,5 +19,13 @@ const createAttendanceValidation = Joi.object({
 });
 
 const getAttendanceValidation = Joi.string().max(100).required();
+const getAttendanceByIdValidation = Joi.object({
+  id: Joi.string().max(100).required(),
+  email: Joi.string().email().max(100).required(),
+});
 
-export { createAttendanceValidation, getAttendanceValidation };
+export {
+  createAttendanceValidation,
+  getAttendanceValidation,
+  getAttendanceByIdValidation,
+};
