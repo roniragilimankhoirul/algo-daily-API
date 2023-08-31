@@ -32,7 +32,6 @@ const getById = async (req, res, next) => {
     const email = req.decodedToken.user.email;
     const request = req.params;
     request.email = email;
-    console.log(request);
     const result = await attendaceService.getById(request);
     res.status(200).json({
       data: result,
@@ -42,4 +41,22 @@ const getById = async (req, res, next) => {
   }
 };
 
-export default { createAttendance, get, getById };
+const updateAttendance = async (req, res, next) => {
+  try {
+    const user = req.decodedToken.user;
+    const attendance = req.params;
+    const request = req.body;
+    const result = await attendaceService.updateAttendance(
+      user,
+      attendance,
+      request
+    );
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default { createAttendance, get, getById, updateAttendance };

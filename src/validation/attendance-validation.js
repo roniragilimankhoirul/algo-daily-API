@@ -24,8 +24,18 @@ const getAttendanceByIdValidation = Joi.object({
   email: Joi.string().email().max(100).required(),
 });
 
+const updateAttendanceValidation = Joi.object({
+  status: Joi.string()
+    .valid(...StatusEnum)
+    .required(),
+  latitude: Joi.number(),
+  longitude: Joi.number(),
+  reason: Joi.string(),
+});
+
 export {
   createAttendanceValidation,
   getAttendanceValidation,
   getAttendanceByIdValidation,
+  updateAttendanceValidation,
 };

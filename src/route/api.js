@@ -30,5 +30,9 @@ userRouter.get(
   "/api/users/attendance/history/:id",
   attendaceController.getById
 );
+userRouter.put(
+  "/api/users/attendance/history/:id",
+  attendaceController.updateAttendance
+);
 
 export { userRouter };

@@ -4,6 +4,7 @@ import {
   createAttendanceValidation,
   getAttendanceByIdValidation,
   getAttendanceValidation,
+  updateAttendanceValidation,
 } from "../validation/attendance-validation.js";
 import { validate } from "../validation/validation.js";
 import { ResponseError } from "../error/response-error.js";
@@ -97,4 +98,52 @@ const getById = async (request) => {
   return userAttendance.attendance;
 };
 
-export default { createAttendance, get, getById };
+const updateAttendance = async (user, attendace, request) => {
+  request = validate(updateAttendanceValidation, request);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  const existingUserAttendance = await prismaClient.userAttendance.findUnique({
+    where: {
+      user_id_attendance_id: {
+        user_id: userInDatabase.id,
+        attendance_id: attendace.id,
+      },
+    },
+  });
+
+  if (!existingUserAttendance) {
+    throw new ResponseError(404, "User Attendance Not Found");
+  }
+
+  const updatedUserAttendance = await prismaClient.userAttendance.update({
+    where: {
+      user_id_attendance_id: {
+        user_id: userInDatabase.id,
+        attendance_id: attendace.id,
+      },
+    },
+    data: {
+      attendance: {
+        update: {
+          ...request,
+          timestamp: new Date(), // Update the timestamp field
+        },
+      },
+    },
+    include: {
+      attendance: true,
+    },
+  });
+
+  return updatedUserAttendance.attendance;
+};
+
+export default { createAttendance, get, getById, updateAttendance };
