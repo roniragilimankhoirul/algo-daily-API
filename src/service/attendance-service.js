@@ -31,6 +31,7 @@ const createAttendance = async (user, request) => {
       },
     },
     select: {
+      id: true,
       status: true,
       timestamp: true,
       latitude: true,
