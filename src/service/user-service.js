@@ -10,10 +10,7 @@ import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { logger } from "../application/logging.js";
 import ImageKit from "imagekit";
-import CryptoJS from "crypto-js";
-import { request } from "express";
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);

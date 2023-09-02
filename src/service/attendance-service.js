@@ -1,4 +1,3 @@
-import { request } from "express";
 import { prismaClient } from "../application/database.js";
 import {
   createAttendanceValidation,
