@@ -62,6 +62,11 @@ const get = async (user) => {
     include: {
       attendance: true,
     },
+    orderBy: {
+      attendance: {
+        created_at: "desc",
+      },
+    },
   });
 
   return userAttendances.map(({ attendance }) => attendance);
