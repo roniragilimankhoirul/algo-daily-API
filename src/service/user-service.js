@@ -91,6 +91,13 @@ const get = async (user) => {
   if (!userInDatabase) {
     throw new ResponseError("User not Found");
   }
+
+  if (userInDatabase.photo_url === null) {
+    userInDatabase.photo_url =
+      "https://ui-avatars.com/api/?size=128&background=0D8ABC&color=fff&name=" +
+      encodeURIComponent(userInDatabase.name);
+  }
+
   console.log(userInDatabase);
   return userInDatabase;
 };
