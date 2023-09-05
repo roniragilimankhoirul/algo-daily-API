@@ -35,4 +35,6 @@ userRouter.put(
   attendaceController.updateAttendance
 );
 
+userRouter.get("/api/users/statistic", userController.getUserStatistic);
+
 export { userRouter };

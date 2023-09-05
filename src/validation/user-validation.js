@@ -25,10 +25,13 @@ const updateUserPasswordValidation = Joi.object({
     .messages({ "any.only": "Passwords must match" }),
 });
 
+const getUserStatisticValidation = Joi.string().max(100).required();
+
 export {
   registerUserValidation,
   loginUserValidation,
   getUserValidation,
   updateUserPhotoValidation,
   updateUserPasswordValidation,
+  getUserStatisticValidation,
 };

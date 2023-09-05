@@ -1,5 +1,6 @@
 import { validate } from "../validation/validation.js";
 import {
+  getUserStatisticValidation,
   getUserValidation,
   loginUserValidation,
   registerUserValidation,
@@ -161,4 +162,73 @@ const updateUserPassword = async (user, newPassword) => {
   });
 };
 
-export default { register, login, get, updateUserPhoto, updateUserPassword };
+const getUserStatistic = async (user) => {
+  user = validate(getUserStatisticValidation, user);
+  const userInDatabase = await prismaClient.user.findUnique({
+    where: {
+      email: user,
+    },
+  });
+
+  if (!userInDatabase) {
+    throw new ResponseError(404, "User Not Found");
+  }
+
+  // Mendapatkan tanggal saat ini secara dinamis
+  const currentDate = new Date();
+
+  // Tentukan tanggal awal dan akhir untuk pencarian attendance dalam satu hari
+  const startDate = new Date(currentDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  const endDate = new Date(currentDate);
+  endDate.setHours(23, 59, 59, 999);
+
+  // Temukan semua attendance pengguna pada tanggal yang diberikan
+  const userAttendances = await prismaClient.userAttendance.findMany({
+    where: {
+      user_id: userInDatabase.id,
+      attendance: {
+        timestamp: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+    },
+    include: {
+      attendance: true,
+    },
+  });
+
+  // Hitung jumlah attendance yang tepat waktu dan telat
+  let onTimeCount = 0;
+  let lateCount = 0;
+
+  userAttendances.forEach(({ attendance }) => {
+    const timestamp = new Date(attendance.timestamp);
+    const createdAt = new Date(attendance.created_at);
+
+    const timeDifference = (timestamp - createdAt) / 1000; // Dalam detik
+
+    if (timeDifference <= 300) {
+      // Lebih dari atau sama dengan 5 menit (300 detik) adalah tepat waktu
+      onTimeCount++;
+    } else {
+      lateCount++;
+    }
+  });
+
+  return {
+    onTimeCount,
+    lateCount,
+  };
+};
+
+export default {
+  register,
+  login,
+  get,
+  updateUserPhoto,
+  updateUserPassword,
+  getUserStatistic,
+};
