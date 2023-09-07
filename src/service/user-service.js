@@ -174,18 +174,18 @@ const getUserStatistic = async (user) => {
     throw new ResponseError(404, "User Not Found");
   }
 
-  // Mendapatkan tanggal saat ini secara dinamis
+  // Get the current date
   const currentDate = new Date();
 
-  // Tentukan tanggal awal dan akhir untuk pencarian attendance dalam satu hari
-  const startDate = new Date(currentDate);
-  startDate.setHours(0, 0, 0, 0);
-
+  // Determine the start and end dates for the one-day period
   const endDate = new Date(currentDate);
   endDate.setHours(23, 59, 59, 999);
 
-  // Temukan semua attendance pengguna pada tanggal yang diberikan
-  const userAttendances = await prismaClient.userAttendance.findMany({
+  const startDate = new Date(currentDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  // Find all user attendances within the one-day period
+  const userAttendancesDay = await prismaClient.userAttendance.findMany({
     where: {
       user_id: userInDatabase.id,
       attendance: {
@@ -200,27 +200,71 @@ const getUserStatistic = async (user) => {
     },
   });
 
-  // Hitung jumlah attendance yang tepat waktu dan telat
-  let onTimeCount = 0;
-  let lateCount = 0;
+  // Count the number of on-time and late attendance entries within the day
+  let onTimeCountDay = 0;
+  let lateCountDay = 0;
 
-  userAttendances.forEach(({ attendance }) => {
+  userAttendancesDay.forEach(({ attendance }) => {
     const timestamp = new Date(attendance.timestamp);
     const createdAt = new Date(attendance.created_at);
 
-    const timeDifference = (timestamp - createdAt) / 1000; // Dalam detik
+    const timeDifference = (timestamp - createdAt) / 1000; // In seconds
 
     if (timeDifference <= 300) {
-      // Lebih dari atau sama dengan 5 menit (300 detik) adalah tepat waktu
-      onTimeCount++;
+      // More than or equal to 5 minutes (300 seconds) is considered on-time
+      onTimeCountDay++;
     } else {
-      lateCount++;
+      lateCountDay++;
     }
   });
 
+  // Determine the start and end dates for the one-week period (5 working days)
+  const weekStartDate = new Date(currentDate);
+  weekStartDate.setDate(currentDate.getDate() - 4); // Assuming a week is 5 working days (exclude Sat and Sun)
+  weekStartDate.setHours(0, 0, 0, 0);
+
+  // Find all user attendances within the one-week period
+  const userAttendancesWeek = await prismaClient.userAttendance.findMany({
+    where: {
+      user_id: userInDatabase.id,
+      attendance: {
+        timestamp: {
+          gte: weekStartDate,
+          lte: endDate,
+        },
+      },
+    },
+    include: {
+      attendance: true,
+    },
+  });
+
+  // Count the total number of attendance entries within the week
+  const totalAttendanceCountWeek = userAttendancesWeek.length;
+
+  // Count the number of on-time attendance entries within the week
+  let onTimeCountWeek = 0;
+
+  userAttendancesWeek.forEach(({ attendance }) => {
+    const timestamp = new Date(attendance.timestamp);
+    const createdAt = new Date(attendance.created_at);
+
+    const timeDifference = (timestamp - createdAt) / 1000; // In seconds
+
+    if (timeDifference <= 600) {
+      // More than or equal to 5 minutes (300 seconds) is considered on-time
+      onTimeCountWeek++;
+    }
+  });
+
+  // Calculate the percentage of on-time attendance for the week (5 working days)
+  const onTimePercentageWeek =
+    (onTimeCountWeek / totalAttendanceCountWeek) * 100;
+
   return {
-    onTimeCount,
-    lateCount,
+    onTimeCountDay,
+    lateCountDay,
+    onTimePercentageWeek,
   };
 };
 
