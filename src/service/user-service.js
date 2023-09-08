@@ -258,8 +258,9 @@ const getUserStatistic = async (user) => {
   });
 
   // Calculate the percentage of on-time attendance for the week (5 working days)
-  const onTimePercentageWeek =
-    (onTimeCountWeek / totalAttendanceCountWeek) * 100;
+  const onTimePercentageWeek = Math.floor(
+    (onTimeCountWeek / totalAttendanceCountWeek) * 100
+  );
 
   return {
     onTimeCountDay,
