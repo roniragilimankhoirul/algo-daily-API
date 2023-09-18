@@ -5,13 +5,13 @@ import {
   loginUserValidation,
   registerUserValidation,
   updateUserPasswordValidation,
-  updateUserPhotoValidation,
 } from "../validation/user-validation.js";
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import ImageKit from "imagekit";
+import "dotenv/config";
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
@@ -64,10 +64,11 @@ const login = async (request) => {
       "The email address or password is incorrect. Please retry..."
     );
   }
-  const jwtSecretKey =
-    "CoAmswhTKX+W4/I2einL3kIrTQ8nAHny902dTJO1n3JJ2EmQci2Cs5QedkHwEsgW+SSEYBmCN4YZbh9e0KfZ3Q==";
+
+  const jwtSecretKey = process.env.JWT_SECRET;
+
   // const encryptJwtKey =
-  const token = jwt.sign({ user }, jwtSecretKey, { expiresIn: "1d" });
+  const token = jwt.sign({ user }, jwtSecretKey);
   const userFullData = await prismaClient.user.findUnique({
     where: {
       email: user.email,
@@ -99,7 +100,6 @@ const get = async (user) => {
       encodeURIComponent(userInDatabase.name);
   }
 
-  console.log(userInDatabase);
   return userInDatabase;
 };
 
@@ -210,7 +210,7 @@ const getUserStatistic = async (user) => {
 
     const timeDifference = (timestamp - createdAt) / 1000; // In seconds
 
-    if (timeDifference <= 300) {
+    if (timeDifference <= 600) {
       // More than or equal to 5 minutes (300 seconds) is considered on-time
       onTimeCountDay++;
     } else {

@@ -9,6 +9,7 @@ const createAttendanceValidation = Joi.object({
   latitude: Joi.number().allow(null),
   longitude: Joi.number().allow(null),
   reason: Joi.string().allow(null),
+  created_at: Joi.date().optional(),
 });
 
 const getAttendanceValidation = Joi.string().max(100).required();

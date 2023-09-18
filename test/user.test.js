@@ -100,4 +100,13 @@ describe("POST /api/users/login", () => {
     logger.info(result.body);
     expect(result.status).toBe(401);
   });
+
+  test("should reject login user", async () => {
+    const result = await supertest(app).post("/api/users/login").send({
+      email: "tet@gmail.com",
+      password: "test",
+    });
+    logger.info(result.body);
+    expect(result.status).toBe(401);
+  });
 });
