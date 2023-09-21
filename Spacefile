@@ -12,4 +12,7 @@ micros:
         - name: DATABASE_URL
           description: Secret message only available to this Micro
           default: "postgres://default:mx1QTR2HYMvK@ep-tight-union-83852881.ap-southeast-1.postgres.vercel-storage.com:5432/verceldb"
+        - name: JWT_SECRET
+          description: JWT secret key
+          default: "CoAmswhTKX+W4/I2einL3kIrTQ8nAHny902dTJO1n3JJ2EmQci2Cs5QedkHwEsgW+SSEYBmCN4YZbh9e0KfZ3Q=="
     run: node index.js
