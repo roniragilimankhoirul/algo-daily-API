@@ -91,7 +91,7 @@ const get = async (user) => {
     },
   });
   if (!userInDatabase) {
-    throw new ResponseError("User not Found");
+    throw new ResponseError(404, "User not Found");
   }
 
   if (userInDatabase.photo_url === null) {
